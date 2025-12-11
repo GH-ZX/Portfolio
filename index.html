@@ -454,29 +454,29 @@
                     <div onclick="openModal('technoverse')" class="project-card h-80 cursor-pointer shadow-2xl">
                         <img src="assets/project2.jpg" onerror="this.src='https://placehold.co/600x800/1e3a8a/fff?text=TechnoVerse'" alt="App">
                         <div class="project-overlay">
-                            <span class="text-accent text-xs font-bold uppercase tracking-wider mb-2">Flutter App</span>
-                            <h3 class="text-white text-2xl font-bold mb-2">TechnoVerse</h3>
-                            <p class="text-gray-300 text-sm line-clamp-2">E-commerce solution for tech gear with Admin Panel.</p>
-                        </div>
+                                <span class="text-accent text-xs font-bold uppercase tracking-wider mb-2" data-i18n="projTechnoverseTag">Flutter App</span>
+                                <h3 class="text-white text-2xl font-bold mb-2" data-i18n="projTechnoverseTitle">TechnoVerse</h3>
+                                <p class="text-gray-300 text-sm line-clamp-2" data-i18n="projTechnoverseDesc">E-commerce solution for tech gear with Admin Panel.</p>
+                            </div>
                     </div>
 
                     <!-- Project 2 -->
                     <div onclick="openModal('taskverse')" class="project-card h-80 cursor-pointer shadow-2xl">
                         <img src="assets/project4.jpg" onerror="this.src='https://placehold.co/600x800/134e4a/fff?text=TaskVerse'" alt="Task System">
                         <div class="project-overlay">
-                            <span class="text-green-400 text-xs font-bold uppercase tracking-wider mb-2">Management System</span>
-                            <h3 class="text-white text-2xl font-bold mb-2">TaskVerse</h3>
-                            <p class="text-gray-300 text-sm line-clamp-2">Workflow optimization for Media Dept using Flutter.</p>
-                        </div>
+                                <span class="text-green-400 text-xs font-bold uppercase tracking-wider mb-2" data-i18n="projTaskverseTag">Management System</span>
+                                <h3 class="text-white text-2xl font-bold mb-2" data-i18n="projTaskverseTitle">TaskVerse</h3>
+                                <p class="text-gray-300 text-sm line-clamp-2" data-i18n="projTaskverseDesc">Workflow optimization for Media Dept using Flutter.</p>
+                            </div>
                     </div>
 
                     <!-- Project 3 -->
                     <div onclick="openModal('web')" class="project-card h-80 cursor-pointer shadow-2xl">
                         <img src="assets/project3.jpg" onerror="this.src='https://placehold.co/600x800/475569/fff?text=Web+Design'" alt="Web">
                         <div class="project-overlay">
-                            <span class="text-pink-400 text-xs font-bold uppercase tracking-wider mb-2">Web Design</span>
-                            <h3 class="text-white text-2xl font-bold mb-2">Carrefour Web Store</h3>
-                            <p class="text-gray-300 text-sm line-clamp-2">Modern responsive web store using React & Tailwind.</p>
+                            <span class="text-pink-400 text-xs font-bold uppercase tracking-wider mb-2" data-i18n="projWebTag">Web Design</span>
+                            <h3 class="text-white text-2xl font-bold mb-2" data-i18n="projWebTitle">Carrefour Web Store</h3>
+                            <p class="text-gray-300 text-sm line-clamp-2" data-i18n="projWebDesc">Modern responsive web store using React & Tailwind.</p>
                         </div>
                     </div>
                     
@@ -484,9 +484,9 @@
                     <div onclick="openModal('tpp')" class="project-card h-80 cursor-pointer shadow-2xl md:col-span-2 lg:col-span-1">
                         <img src="assets/project1.jpg" onerror="this.src='https://placehold.co/600x800/222/8b5cf6?text=TPP+Game'" alt="Game">
                         <div class="project-overlay">
-                            <span class="text-purple-400 text-xs font-bold uppercase tracking-wider mb-2">Unreal Engine 5</span>
-                            <h3 class="text-white text-2xl font-bold mb-2">TPP Shooter</h3>
-                            <p class="text-gray-300 text-sm line-clamp-2">High-fidelity 3D game with advanced mechanics.</p>
+                            <span class="text-purple-400 text-xs font-bold uppercase tracking-wider mb-2" data-i18n="projTppTag">Unreal Engine 5</span>
+                            <h3 class="text-white text-2xl font-bold mb-2" data-i18n="projTppTitle">TPP Shooter</h3>
+                            <p class="text-gray-300 text-sm line-clamp-2" data-i18n="projTppDesc">High-fidelity 3D game with advanced mechanics.</p>
                         </div>
                     </div>
                 </div>
@@ -499,6 +499,73 @@
                 </div>
             </div>
         </section>
+
+       <!-- Contact Section -->
+    <section id="contact" class="py-20 relative">
+        <div class="container mx-auto px-4">
+            <div class="glass-card max-w-4xl mx-auto rounded-3xl p-8 md:p-12 shadow-2xl overflow-hidden relative border-t border-white/20">
+                <!-- Decor -->
+                <div class="absolute top-0 right-0 w-32 h-32 bg-secondary/20 rounded-full blur-2xl -mr-16 -mt-16"></div>
+                <div class="absolute bottom-0 left-0 w-32 h-32 bg-primary/20 rounded-full blur-2xl -ml-16 -mb-16"></div>
+                
+                <div class="text-center mb-12 relative z-10">
+                    <h2 class="text-3xl md:text-4xl font-bold mb-4" data-i18n="contactTitle">Let's Work Together</h2>
+                    <p class="text-gray-600 dark:text-gray-300" data-i18n="contactDesc">
+                        Looking for a Mobile Developer, Game Dev, or IT Specialist? I'm ready to join your team.
+                    </p>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-8 relative z-10">
+                    <div class="space-y-6">
+                        <a href="mailto:ahmedghawi3@gmail.com" class="flex items-center gap-4 p-4 rounded-xl bg-white/50 dark:bg-gray-800/50 hover:bg-white dark:hover:bg-gray-800 transition-colors group">
+                            <div class="w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center text-red-500">
+                                <i class="ph ph-envelope-simple text-2xl group-hover:scale-110 transition-transform"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">Email</p>
+                                <p class="font-semibold break-all">ahmedghawi3@gmail.com</p>
+                            </div>
+                        </a>
+
+                        <a href="https://www.linkedin.com/in/ahmed-gh-17aa35227/" target="_blank" class="flex items-center gap-4 p-4 rounded-xl bg-white/50 dark:bg-gray-800/50 hover:bg-white dark:hover:bg-gray-800 transition-colors group">
+                            <div class="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-500">
+                                <i class="ph ph-linkedin-logo text-2xl group-hover:scale-110 transition-transform"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">LinkedIn</p>
+                                <p class="font-semibold">Ahmed Khalil Ghawi</p>
+                            </div>
+                        </a>
+
+                        <div class="flex items-center gap-4 p-4 rounded-xl bg-white/50 dark:bg-gray-800/50 hover:bg-white dark:hover:bg-gray-800 transition-colors group">
+                            <div class="w-12 h-12 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center text-green-500">
+                                <i class="ph ph-phone text-2xl group-hover:scale-110 transition-transform"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs text-gray-500 dark:text-gray-400" data-i18n="phoneLabel">Phone</p>
+                                <p class="font-semibold" style="direction: ltr;">+963 968 098 330</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <form class="space-y-4" onsubmit="event.preventDefault(); window.location.href='mailto:ahmedghawi3@gmail.com';">
+                        <div>
+                            <label class="block text-sm font-medium mb-1" data-i18n="formName">Name</label>
+                            <input type="text" class="w-full px-4 py-3 rounded-lg bg-white/50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 focus:ring-2 focus:ring-primary focus:outline-none transition-all" placeholder="John Doe">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-1" data-i18n="formMsg">Message</label>
+                            <textarea rows="4" class="w-full px-4 py-3 rounded-lg bg-white/50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 focus:ring-2 focus:ring-primary focus:outline-none transition-all" placeholder="Hi Ahmed, I'd like to discuss..."></textarea>
+                        </div>
+                        <button type="submit" class="w-full py-3 bg-gradient-to-r from-primary to-secondary text-white font-bold rounded-lg hover:shadow-lg hover:shadow-primary/40 transition-all transform hover:-translate-y-1">
+                            <span data-i18n="formBtn">Send Message</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
 
         <!-- Footer -->
         <footer class="py-8 border-t border-gray-200 dark:border-gray-800 text-center">
@@ -562,7 +629,41 @@
                     valUniversity: "University of Science and Renaissance (Azaz)",
                     valAleppo: "Aleppo, Syria",
                     viewDetailsBtn: "View Details",
-                    btnGithub: "GitHub Profile"
+                    btnGithub: "GitHub Profile",
+
+                    /* Project translations */
+                    projTechnoverseTag: "Flutter App",
+                    projTechnoverseTitle: "TechnoVerse",
+                    projTechnoverseDesc: "A fully functional e-commerce mobile application for buying and selling tech gear.",
+
+                    projTaskverseTag: "Management System",
+                    projTaskverseTitle: "TaskVerse",
+                    projTaskverseDesc: "Workflow optimization tool for media teams.",
+
+                    projWebTag: "Web Design",
+                    projWebTitle: "Carrefour Web Store",
+                    projWebDesc: "A modern responsive web store built with React and Tailwind.",
+
+                    projTppTag: "Unreal Engine 5",
+                    projTppTitle: "TPP Shooter",
+                    projTppDesc: "High-fidelity 3D third-person shooter made with UE5.",
+
+                    /* Contact section */
+                    secContactTitle: "Get In Touch",
+                    secContactDesc: "I'm available for freelance work and collaborations. Send a message or reach out via email.",
+                    contactEmailLabel: "Email:",
+                    contactEmail: "your.email@example.com",
+                    contactPhoneLabel: "Phone:",
+                    contactPhone: "+963-900-000-000",
+                    contactButton: "Send Message",
+
+                    /* HTML data-i18n keys (English) */
+                    contactTitle: "Get In Touch",
+                    contactDesc: "I'm available for freelance work and collaborations. Send a message or reach out via email.",
+                    phoneLabel: "Phone",
+                    formName: "Name",
+                    formMsg: "Message",
+                    formBtn: "Send Message"
                 },
                 ar: {
                     navAbout: "من أنا", navSkills: "المهارات", navProjects: "أعمالي", navContact: "تواصل",
@@ -617,7 +718,41 @@
                     valUniversity: "جامعة العلوم والنهضة (اعزاز)",
                     valAleppo: "حلب، سوريا",
                     viewDetailsBtn: "التفاصيل",
-                    btnGithub: "حساب GitHub"
+                    btnGithub: "حساب GitHub",
+
+                    /* Project translations */
+                    projTechnoverseTag: "تطبيق فلاتر",
+                    projTechnoverseTitle: "TechnoVerse",
+                    projTechnoverseDesc: "تطبيق تجارة إلكترونية متكامل لبيع وشراء الأجهزة التقنية.",
+
+                    projTaskverseTag: "نظام إدارة",
+                    projTaskverseTitle: "TaskVerse",
+                    projTaskverseDesc: "أداة لتحسين سير العمل لفرق الإعلام.",
+
+                    projWebTag: "تصميم ويب",
+                    projWebTitle: "متجر كارفور",
+                    projWebDesc: "متجر ويب مستجيب وحديث مبني باستخدام React و Tailwind.",
+
+                    projTppTag: "Unreal Engine 5",
+                    projTppTitle: "TPP Shooter",
+                    projTppDesc: "لعبة من منظور الشخص الثالث عالية الجودة باستخدام UE5.",
+
+                    /* Contact section */
+                    secContactTitle: "تواصل معي",
+                    secContactDesc: "متاح للعمل الحر وللتعاون. أرسل رسالة أو تواصل عبر البريد الإلكتروني.",
+                    contactEmailLabel: "البريد:",
+                    contactEmail: "your.email@example.com",
+                    contactPhoneLabel: "الهاتف:",
+                    contactPhone: "+963-900-000-000",
+                    contactButton: "أرسل رسالة",
+
+                    /* HTML data-i18n keys (Arabic) */
+                    contactTitle: "تواصل معي",
+                    contactDesc: "متاح للعمل الحر وللتعاون. أرسل رسالة أو تواصل عبر البريد الإلكتروني.",
+                    phoneLabel: "الهاتف",
+                    formName: "الاسم",
+                    formMsg: "الرسالة",
+                    formBtn: "أرسل رسالة"
                 }
             };
 
@@ -728,8 +863,11 @@
             window.openModal = (id) => {
                 const data = projectData[id];
                 if(!data) return;
-                document.getElementById('modal-title').innerText = data.title;
-                document.getElementById('modal-desc').innerText = data.desc;
+                const keyBase = 'proj' + id.charAt(0).toUpperCase() + id.slice(1);
+                const title = (translations[currentLang] && translations[currentLang][keyBase + 'Title']) ? translations[currentLang][keyBase + 'Title'] : data.title;
+                const desc = (translations[currentLang] && translations[currentLang][keyBase + 'Desc']) ? translations[currentLang][keyBase + 'Desc'] : data.desc;
+                document.getElementById('modal-title').innerText = title;
+                document.getElementById('modal-desc').innerText = desc;
                 document.getElementById('modal-link').href = data.link;
                 document.getElementById('modal-img').src = data.img;
                 document.getElementById('modal-img').onerror = function(){this.src=data.fallback};
