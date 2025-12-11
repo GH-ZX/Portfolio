@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio | Ahmed GH </title>
+    
+    <!-- Favicon (Code Icon) -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%236366f1'><path d='M12.8,4.5l8,4c0.3,0.1,0.3,0.3,0.1,0.5l-0.8,0.4l5.3,7.9c0.2,0.3,0.1,0.7-0.2,0.9l-2,1.3 c-0.3,0.2-0.7,0.1-0.9-0.2l-5.3-7.9l-3.2,1.6v6c0,0.6-0.4,1-1,1h-4c-0.6,0-1-0.4-1-1v-6L4.5,11.5l-0.8-0.4 c-0.2-0.1-0.2-0.4,0.1-0.5l8-4C12,4.5,12.5,4.5,12.8,4.5z'/></svg>">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    
+    <!-- Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                        arabic: ['Cairo', 'sans-serif'], 
+                    },
+                    colors: {
+                        primary: '#6366f1', // Indigo
+                        secondary: '#ec4899', // Pink
+                        accent: '#0ea5e9', // Sky Blue
+                        dark: '#0b0f19', // Deep dark blue-black
+                        light: '#f8fafc', 
+                        glass: 'rgba(255, 255, 255, 0.05)',
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            overflow-x: hidden;
+            cursor: none; 
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+        .dark .glass-card {
+            background: rgba(15, 23, 42, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        /* Project Card Styles */
+        .project-card {
+            position: relative;
+            overflow: hidden;
+            border-radius: 1rem;
+            transition: all 0.4s ease;
+        }
+        .project-card img {
+            transition: transform 0.5s ease;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .project-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.9), rgba(0,0,0,0.2));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 1.5rem;
+        }
+        .project-card:hover img {
+            transform: scale(1.1);
+        }
+        .project-card:hover .project-overlay {
+            opacity: 1;
+        }
+        .project-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        /* Cursor */
+        .cursor-ring {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #6366f1;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            transition: width 0.3s, height 0.3s, background-color 0.3s;
+            mix-blend-mode: difference;
+        }
+        .cursor-dot {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 4px;
+            background-color: #ec4899;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 10000;
+            transform: translate(-50%, -50%);
+        }
+        @media (max-width: 768px) {
+            .cursor-ring, .cursor-dot { display: none; }
+            body { cursor: auto; }
+        }
+
+        #canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.5;
+        }
+
+        /* Experience Card Styles */
+        .exp-card {
+            border-left: 4px solid transparent;
+            transition: all 0.3s ease;
+        }
+        .exp-card:hover {
+            border-left-color: #6366f1;
+            background: rgba(99, 102, 241, 0.05);
+            transform: translateX(5px);
+        }
+
+        /* Flag Icon */
+        .flag-icon {
+            width: 24px;
+            height: 16px;
+            display: inline-flex;
+            flex-direction: column;
+            border: 1px solid #555;
+        }
+        .flag-green { background-color: #007A3D; height: 33.33%; width: 100%; }
+        .flag-white { background-color: #FFFFFF; height: 33.33%; width: 100%; display: flex; justify-content: center; align-items: center; gap: 2px; }
+        .flag-black { background-color: #000000; height: 33.33%; width: 100%; }
+        .flag-star { color: #CE1126; font-size: 6px; line-height: 0; }
+        
+        #project-modal.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+        #project-modal { transition: opacity 0.3s ease, visibility 0.3s; opacity: 1; visibility: visible; }
+    </style>
+</head>
+<body class="bg-light dark:bg-dark text-slate-800 dark:text-slate-100 font-sans selection:bg-primary selection:text-white">
+
+    <div class="cursor-ring" id="cursor-ring"></div>
+    <div class="cursor-dot" id="cursor-dot"></div>
+    <div id="canvas-container"></div>
+
+    <!-- Modal -->
+    <div id="project-modal" class="hidden fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+        <div class="bg-white dark:bg-[#1a1f2e] rounded-2xl w-full max-w-3xl shadow-2xl overflow-hidden border border-gray-200 dark:border-gray-700 relative flex flex-col md:flex-row max-h-[90vh]">
+            <button onclick="closeModal()" class="absolute top-4 right-4 z-20 p-2 bg-black/20 dark:bg-white/10 rounded-full hover:bg-red-500 hover:text-white transition-colors">
+                <i class="ph ph-x text-xl text-white"></i>
+            </button>
+            <div class="w-full md:w-1/2 h-64 md:h-auto bg-gray-900 relative">
+                <img id="modal-img" src="" class="w-full h-full object-cover">
+            </div>
+            <div class="w-full md:w-1/2 p-8 overflow-y-auto">
+                <h3 id="modal-title" class="text-2xl font-bold mb-2">Project Title</h3>
+                <div class="flex flex-wrap gap-2 mb-4" id="modal-tags"></div>
+                <p id="modal-desc" class="text-gray-600 dark:text-gray-300 leading-relaxed mb-8 text-sm md:text-base"></p>
+                <a href="#" id="modal-link" target="_blank" class="inline-flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-lg hover:bg-indigo-600 transition-colors font-bold w-full justify-center md:w-auto">
+                    <span data-i18n="viewDetailsBtn">View Details</span>
+                    <i class="ph ph-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Nav -->
+    <nav class="fixed w-full z-50 top-0 border-b border-gray-200 dark:border-white/5 bg-white/70 dark:bg-dark/70 backdrop-blur-lg">
+        <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
+            <a href="#" class="flex items-center gap-2 group">
+                <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white shadow-lg group-hover:rotate-6 transition-transform">
+                    <i class="ph ph-briefcase text-2xl"></i>
+                </div>
+                <div class="hidden sm:block">
+                    <span class="block text-sm font-bold leading-none">AHMED</span>
+                    <span class="block text-xs text-gray-500 dark:text-gray-400 tracking-widest">PORTFOLIO</span>
+                </div>
+            </a>
+            
+            <div class="flex items-center gap-3">
+                <button id="theme-toggle" class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                    <i class="ph ph-sun text-xl hidden dark:block text-yellow-400"></i>
+                    <i class="ph ph-moon text-xl block dark:hidden text-slate-700"></i>
+                </button>
+                <button id="lang-toggle" class="px-3 py-1 text-sm font-bold border border-gray-300 dark:border-gray-700 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800">
+                    EN / AR
+                </button>
+                <button id="menu-btn" class="md:hidden p-2"><i class="ph ph-list text-2xl"></i></button>
+            </div>
+
+            <div class="hidden w-full md:block md:w-auto" id="navbar-sticky">
+                <ul class="flex flex-col p-4 md:p-0 mt-4 md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 font-medium">
+                    <li><a href="#about" class="block py-2 hover:text-primary transition-colors" data-i18n="navAbout">About</a></li>
+                    <li><a href="#skills" class="block py-2 hover:text-primary transition-colors" data-i18n="navSkills">Skills</a></li>
+                    <li><a href="#projects" class="block py-2 hover:text-primary transition-colors" data-i18n="navProjects">Projects</a></li>
+                    <li><a href="#contact" class="block py-2 hover:text-primary transition-colors" data-i18n="navContact">Contact</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="min-h-screen flex items-center justify-center pt-24 pb-12 relative overflow-hidden">
+        <div class="container mx-auto px-4 grid md:grid-cols-2 gap-12 items-center">
+            <div class="z-10 animate-fade-in-up order-2 md:order-1 text-center md:text-start">
+                <div class="inline-flex items-center gap-2 px-4 py-2 mb-6 rounded-full border border-primary/30 bg-primary/10 text-primary text-sm font-bold uppercase tracking-wider">
+                    <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                    <span data-i18n="heroBadge">IT Specialist & Software Engineer</span>
+                </div>
+                
+                <h1 class="text-4xl md:text-6xl font-extrabold mb-6 leading-tight">
+                    <span class="block text-xl md:text-2xl text-gray-500 dark:text-gray-400 mb-2 font-medium" data-i18n="heroGreeting">Hello, I'm Ahmed Ghawi</span>
+                    <span class="bg-clip-text text-transparent bg-gradient-to-r from-primary via-secondary to-accent" data-i18n="heroTitle1">Mastering Hardware</span>
+                    <span class="block text-slate-800 dark:text-white" data-i18n="heroTitle2">& Building Software.</span>
+                </h1>
+                
+                <p class="text-lg text-gray-600 dark:text-gray-300 mb-8 max-w-xl mx-auto md:mx-0 leading-relaxed" data-i18n="heroDesc">
+                    From diagnosing complex hardware issues to architecting robust Flutter applications. I provide complete IT solutions, ensuring your digital and physical systems run perfectly.
+                </p>
+                
+                <div class="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
+                    <a href="#contact" class="px-8 py-4 rounded-xl bg-primary text-white font-bold hover:bg-indigo-600 shadow-lg shadow-primary/25 transition-all transform hover:-translate-y-1 flex items-center justify-center gap-2">
+                        <span data-i18n="btnContact">Hire Me</span>
+                        <i class="ph ph-briefcase"></i>
+                    </a>
+                    <a href="#projects" class="px-8 py-4 rounded-xl border border-gray-300 dark:border-gray-700 hover:border-primary dark:hover:border-primary hover:text-primary transition-all flex items-center justify-center gap-2 font-semibold">
+                        <span data-i18n="btnProjects">View Projects</span>
+                        <i class="ph ph-caret-down"></i>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="relative z-10 flex justify-center order-1 md:order-2">
+                <div class="relative w-72 h-72 md:w-96 md:h-96">
+                    <div class="absolute inset-0 bg-gradient-to-tr from-primary to-secondary rounded-full blur-[60px] opacity-30 animate-pulse"></div>
+                    
+                    <div class="relative w-full h-full rounded-full p-2 border-2 border-dashed border-primary/30">
+                        <div class="w-full h-full rounded-full overflow-hidden border-4 border-white dark:border-gray-800 shadow-2xl relative z-20 bg-gray-800">
+                            <img src="assets/My photo.jpg" onerror="this.src='https://ui-avatars.com/api/?name=Ahmed+Ghawi&background=6366f1&color=fff&size=512'" class="w-full h-full object-cover">
+                        </div>
+                    </div>
+
+                    <!-- Floating Card 1: Networks (with Icon) -->
+                    <div class="absolute top-10 -left-6 md:-left-12 glass-card p-4 rounded-xl shadow-xl animate-float z-30 flex items-center gap-3">
+                        <div class="w-12 h-12 rounded-lg bg-blue-500/10 text-blue-500 flex items-center justify-center">
+                            <i class="ph ph-network-node text-2xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs text-gray-400 font-bold uppercase" data-i18n="cardAdmin">Admin</p>
+                            <p class="font-bold text-sm" data-i18n="cardNetworks">Networks</p>
+                        </div>
+                    </div>
+
+                    <!-- Floating Card 2: Flutter -->
+                    <div class="absolute bottom-10 -right-6 md:-right-12 glass-card p-4 rounded-xl shadow-xl animate-float z-30 flex items-center gap-3" style="animation-delay: 1.5s;">
+                        <div class="w-12 h-12 rounded-lg bg-cyan-500/10 text-cyan-500 flex items-center justify-center">
+                            <i class="ph ph-device-mobile text-2xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs text-gray-400 font-bold uppercase" data-i18n="cardDev">Dev</p>
+                            <p class="font-bold text-sm" data-i18n="cardFlutter">Flutter Apps</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Section (With Personal Details) -->
+        <section id="about" class="py-24 relative">
+            <div class="container mx-auto px-4">
+                <div class="text-center max-w-3xl mx-auto mb-16">
+                    <span class="text-accent font-bold tracking-widest uppercase text-xs" data-i18n="secAboutSmall">Services & Bio</span>
+                    <h2 class="text-3xl md:text-5xl font-bold mt-2 mb-6" data-i18n="secAboutTitle">Comprehensive IT Solutions</h2>
+                    <p class="text-gray-600 dark:text-gray-400 text-lg" data-i18n="aboutText1">
+                        I am an Informatics Engineer who doesn't just write code. I understand the machine it runs on. From fixing a laptop's motherboard to deploying a scalable Flutter app, I bridge the physical and digital worlds.
+                    </p>
+                </div>
+
+                <!-- Personal Details Block -->
+                <div class="glass-card p-8 rounded-2xl mb-12 border-l-4 border-l-secondary max-w-4xl mx-auto">
+                    <h3 class="text-xl font-bold mb-6 flex items-center gap-2">
+                        <i class="ph ph-identification-card text-secondary"></i>
+                        <span data-i18n="personalDetailsTitle">Personal Details</span>
+                    </h3>
+                    <div class="grid md:grid-cols-2 gap-6 text-sm">
+                        <div class="flex items-center justify-between border-b border-gray-100 dark:border-gray-700 pb-2">
+                            <span class="text-gray-500" data-i18n="labelName">Name:</span>
+                            <span class="font-bold" data-i18n="Myname">Ahmed Khalil Ghawi</span>
+                        </div>
+                        <div class="flex items-center justify-between border-b border-gray-100 dark:border-gray-700 pb-2">
+                            <span class="text-gray-500" data-i18n="labelFrom">From:</span>
+                            <span class="font-bold flex items-center gap-2">
+                                <span class="flag-icon"><span class="flag-green"></span><span class="flag-white"><span class="flag-star">★</span><span class="flag-star">★</span><span class="flag-star">★</span></span><span class="flag-black"></span></span>
+                                <span data-i18n="valAleppo">Aleppo, Syria</span>
+                            </span>
+                        </div>
+                        <div class="flex items-center justify-between border-b border-gray-100 dark:border-gray-700 pb-2">
+                            <span class="text-gray-500" data-i18n="labelUniversity">University:</span>
+                            <span class="font-bold text-right" data-i18n="valUniversity">University of Science and Renaissance (Azaz)</span>
+                        </div>
+                        <div class="flex items-center justify-between border-b border-gray-100 dark:border-gray-700 pb-2">
+                            <span class="text-gray-500" data-i18n="labelDOB">Date of Birth:</span>
+                            <span class="font-bold">01/01/2002</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid md:grid-cols-3 gap-8">
+                    <!-- Service 1 -->
+                    <div class="glass-card p-8 rounded-2xl hover:border-primary/50 transition-colors group">
+                        <i class="ph ph-hard-drives text-5xl text-primary mb-6 group-hover:scale-110 transition-transform block"></i>
+                        <h3 class="text-xl font-bold mb-3" data-i18n="service1Title">IT Support, Hardware & Networks</h3>
+                        <ul class="text-gray-600 dark:text-gray-400 space-y-2 text-sm" data-i18n="service1List">
+                            <li class="flex items-center gap-2"><i class="ph ph-check text-green-500"></i> Server & Network Admin</li>
+                            <li class="flex items-center gap-2"><i class="ph ph-check text-green-500"></i> Laptop Hardware Repair</li>
+                            <li class="flex items-center gap-2"><i class="ph ph-check text-green-500"></i> System Formatting & Security</li>
+                        </ul>
+                    </div>
+
+                    <!-- Service 2 -->
+                    <div class="glass-card p-8 rounded-2xl hover:border-secondary/50 transition-colors group">
+                        <i class="ph ph-device-mobile-camera text-5xl text-secondary mb-6 group-hover:scale-110 transition-transform block"></i>
+                        <h3 class="text-xl font-bold mb-3" data-i18n="service2Title">App Development</h3>
+                        <ul class="text-gray-600 dark:text-gray-400 space-y-2 text-sm" data-i18n="service2List">
+                            <li class="flex items-center gap-2"><i class="ph ph-check text-green-500"></i> Cross-platform (Flutter)</li>
+                            <li class="flex items-center gap-2"><i class="ph ph-check text-green-500"></i> UI/UX Implementation</li>
+                            <li class="flex items-center gap-2"><i class="ph ph-check text-green-500"></i> Clean Architecture</li>
+                        </ul>
+                    </div>
+
+                    <!-- Service 3 (Added AI Prompting) -->
+                    <div class="glass-card p-8 rounded-2xl hover:border-accent/50 transition-colors group">
+                        <i class="ph ph-globe text-5xl text-accent mb-6 group-hover:scale-110 transition-transform block"></i>
+                        <h3 class="text-xl font-bold mb-3" data-i18n="service3Title">Software & AI Solutions</h3>
+                        <ul class="text-gray-600 dark:text-gray-400 space-y-2 text-sm" data-i18n="service3List">
+                            <li class="flex items-center gap-2"><i class="ph ph-check text-green-500"></i> Web Design (React)</li>
+                            <li class="flex items-center gap-2"><i class="ph ph-check text-green-500"></i> AI Prompting & Usage</li>
+                            <li class="flex items-center gap-2"><i class="ph ph-check text-green-500"></i> Software Installation</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Experience Section (Redesigned) -->
+        <section id="experience" class="py-24 bg-white/50 dark:bg-white/5">
+            <div class="container mx-auto px-4">
+                <h2 class="text-3xl md:text-4xl font-bold text-center mb-16" data-i18n="secExpTitle">Professional Journey</h2>
+                
+                <div class="grid md:grid-cols-2 gap-6 max-w-5xl mx-auto">
+                    <!-- Exp Card 1 -->
+                    <div class="glass-card p-6 rounded-2xl exp-card flex gap-4">
+                        <div class="w-12 h-12 rounded-lg bg-primary/20 text-primary flex items-center justify-center shrink-0">
+                            <i class="ph ph-network-node text-2xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-lg mb-1" data-i18n="expNetworkTitle">Network & Server Admin</h3>
+                            <span class="text-xs bg-primary/10 text-primary px-2 py-1 rounded mb-2 inline-block">Management</span>
+                            <p class="text-sm text-gray-500 dark:text-gray-400" data-i18n="expNetworkDesc">Managing network infrastructure, servers, ensuring secure connectivity, and controlling user administration privileges.</p>
+                        </div>
+                    </div>
+
+                    <!-- Exp Card 2 -->
+                    <div class="glass-card p-6 rounded-2xl exp-card flex gap-4">
+                        <div class="w-12 h-12 rounded-lg bg-secondary/20 text-secondary flex items-center justify-center shrink-0">
+                            <i class="ph ph-wrench text-2xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-lg mb-1" data-i18n="expFreelanceTitle">Freelance IT Specialist</h3>
+                            <span class="text-xs bg-secondary/10 text-secondary px-2 py-1 rounded mb-2 inline-block">Current</span>
+                            <p class="text-sm text-gray-500 dark:text-gray-400" data-i18n="expFreelanceDesc">Diagnosing hardware failures, performing formatting/OS installation, and resolving complex software conflicts.</p>
+                        </div>
+                    </div>
+
+                    <!-- Exp Card 3 -->
+                    <div class="glass-card p-6 rounded-2xl exp-card flex gap-4">
+                        <div class="w-12 h-12 rounded-lg bg-accent/20 text-accent flex items-center justify-center shrink-0">
+                            <i class="ph ph-device-mobile text-2xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-lg mb-1" data-i18n="expWebAppTitle">Web & App Designer</h3>
+                            <span class="text-xs bg-accent/10 text-accent px-2 py-1 rounded mb-2 inline-block">2022 - 2023</span>
+                            <p class="text-sm text-gray-500 dark:text-gray-400" data-i18n="expWebAppDesc">Developed Android applications and managed web projects. Focused on user experience and clean code.</p>
+                        </div>
+                    </div>
+                     <!-- Exp Card 4 -->
+                     <div class="glass-card p-6 rounded-2xl exp-card flex gap-4">
+                        <div class="w-12 h-12 rounded-lg bg-green-500/20 text-green-500 flex items-center justify-center shrink-0">
+                            <i class="ph ph-desktop-tower text-2xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-lg mb-1" data-i18n="expDataTitle">Data Entry & Monitoring</h3>
+                            <span class="text-xs bg-green-500/10 text-green-500 px-2 py-1 rounded mb-2 inline-block">2020 - 2023</span>
+                            <p class="text-sm text-gray-500 dark:text-gray-400" data-i18n="expDataDesc">Precision data handling and system monitoring with organizations like Subul & My Humanity.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Projects Section -->
+        <section id="projects" class="py-24">
+            <div class="container mx-auto px-4">
+                <div class="flex flex-col md:flex-row justify-between items-end mb-12">
+                    <div>
+                        <span class="text-accent font-bold tracking-widest uppercase text-xs">Portfolio</span>
+                        <h2 class="text-3xl md:text-5xl font-bold mt-2" data-i18n="secProjTitle">Selected Works</h2>
+                    </div>
+                    <a href="https://github.com/GH-ZX" target="_blank" class="hidden md:flex items-center gap-2 text-primary hover:text-white hover:bg-primary px-4 py-2 rounded-lg transition-all border border-primary/20">
+                        <span data-i18n="btnGithub">GitHub Profile</span>
+                        <i class="ph ph-github-logo text-lg"></i>
+                    </a>
+                </div>
+
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Project 1 -->
+                    <div onclick="openModal('technoverse')" class="project-card h-80 cursor-pointer shadow-2xl">
+                        <img src="assets/project2.jpg" onerror="this.src='https://placehold.co/600x800/1e3a8a/fff?text=TechnoVerse'" alt="App">
+                        <div class="project-overlay">
+                            <span class="text-accent text-xs font-bold uppercase tracking-wider mb-2">Flutter App</span>
+                            <h3 class="text-white text-2xl font-bold mb-2">TechnoVerse</h3>
+                            <p class="text-gray-300 text-sm line-clamp-2">E-commerce solution for tech gear with Admin Panel.</p>
+                        </div>
+                    </div>
+
+                    <!-- Project 2 -->
+                    <div onclick="openModal('taskverse')" class="project-card h-80 cursor-pointer shadow-2xl">
+                        <img src="assets/project4.jpg" onerror="this.src='https://placehold.co/600x800/134e4a/fff?text=TaskVerse'" alt="Task System">
+                        <div class="project-overlay">
+                            <span class="text-green-400 text-xs font-bold uppercase tracking-wider mb-2">Management System</span>
+                            <h3 class="text-white text-2xl font-bold mb-2">TaskVerse</h3>
+                            <p class="text-gray-300 text-sm line-clamp-2">Workflow optimization for Media Dept using Flutter.</p>
+                        </div>
+                    </div>
+
+                    <!-- Project 3 -->
+                    <div onclick="openModal('web')" class="project-card h-80 cursor-pointer shadow-2xl">
+                        <img src="assets/project3.jpg" onerror="this.src='https://placehold.co/600x800/475569/fff?text=Web+Design'" alt="Web">
+                        <div class="project-overlay">
+                            <span class="text-pink-400 text-xs font-bold uppercase tracking-wider mb-2">Web Design</span>
+                            <h3 class="text-white text-2xl font-bold mb-2">Carrefour Web Store</h3>
+                            <p class="text-gray-300 text-sm line-clamp-2">Modern responsive web store using React & Tailwind.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Project 4 -->
+                    <div onclick="openModal('tpp')" class="project-card h-80 cursor-pointer shadow-2xl md:col-span-2 lg:col-span-1">
+                        <img src="assets/project1.jpg" onerror="this.src='https://placehold.co/600x800/222/8b5cf6?text=TPP+Game'" alt="Game">
+                        <div class="project-overlay">
+                            <span class="text-purple-400 text-xs font-bold uppercase tracking-wider mb-2">Unreal Engine 5</span>
+                            <h3 class="text-white text-2xl font-bold mb-2">TPP Shooter</h3>
+                            <p class="text-gray-300 text-sm line-clamp-2">High-fidelity 3D game with advanced mechanics.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-8 text-center md:hidden">
+                    <a href="https://github.com/GH-ZX" target="_blank" class="inline-flex items-center gap-2 text-primary font-bold">
+                        <span data-i18n="btnGithub">View GitHub</span>
+                        <i class="ph ph-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="py-8 border-t border-gray-200 dark:border-gray-800 text-center">
+            <p class="text-gray-500 text-sm">&copy; 2026 Myname. All Rights Reserved.</p>
+        </footer>
+
+        <!-- Scripts -->
+        <script>
+            // --- Translations ---
+            const translations = {
+                en: {
+                    navAbout: "About", navSkills: "Skills", navProjects: "Work", navContact: "Contact",
+                    heroBadge: "IT Specialist & Software Engineer",
+                    heroGreeting: "Hello, I'm Ahmed Ghawi",
+                    heroTitle1: "Mastering Hardware",
+                    heroTitle2: "& Building Software.",
+                    heroDesc: "From diagnosing complex hardware issues to architecting robust Flutter applications. I provide complete IT solutions, ensuring your digital and physical systems run perfectly.",
+                    btnContact: "Hire Me",
+                    btnProjects: "View Projects",
+                    secAboutTitle: "Comprehensive IT Solutions",
+                    secAboutSmall: "Services & Bio",
+                    aboutText1: "I am an Informatics Engineer who doesn't just write code. I understand the machine it runs on. From fixing a laptop's motherboard to deploying a scalable Flutter app, I bridge the physical and digital worlds.",
+                    secExpTitle: "Professional Journey",
+                    secProjTitle: "Selected Works",
+                    service1Title: "IT Support, Hardware & Networks",
+                    service1List: `
+                        <li class="flex items-center gap-2"><i class="ph ph-check text-green-500"></i> Server & Network Admin</li>
+                        <li class="flex items-center gap-2"><i class="ph ph-check text-green-500"></i> Laptop Hardware Repair</li>
+                        <li class="flex items-center gap-2"><i class="ph ph-check text-green-500"></i> System Formatting & Security</li>
+                    `,
+                    service2Title: "App Development",
+                    service2List: `
+                        <li class="flex items-center gap-2"><i class="ph ph-check text-green-500"></i> Cross-platform (Flutter)</li>
+                        <li class="flex items-center gap-2"><i class="ph ph-check text-green-500"></i> UI/UX Implementation</li>
+                        <li class="flex items-center gap-2"><i class="ph ph-check text-green-500"></i> Clean Architecture</li>
+                    `,
+                    service3Title: "Software & AI Solutions",
+                    service3List: `
+                        <li class="flex items-center gap-2"><i class="ph ph-check text-green-500"></i> Web Design (React)</li>
+                        <li class="flex items-center gap-2"><i class="ph ph-check text-green-500"></i> AI Prompting & Usage</li>
+                        <li class="flex items-center gap-2"><i class="ph ph-check text-green-500"></i> Software Installation</li>
+                    `,
+                    expNetworkTitle: "Network & Server Admin",
+                    expNetworkDesc: "Managing network infrastructure, servers, ensuring secure connectivity, and controlling user administration privileges.",
+                    expFreelanceTitle: "Freelance IT Specialist",
+                    expFreelanceDesc: "Diagnosing hardware failures, performing formatting/OS installation, and resolving complex software conflicts.",
+                    expWebAppTitle: "Web & App Designer",
+                    expWebAppDesc: "Developed Android applications and managed web projects. Focused on user experience and clean code.",
+                    expDataTitle: "Data Entry & Monitoring",
+                    expDataDesc: "Precision data handling and system monitoring with organizations like Subul & My Humanity.",
+                    cardAdmin: "Admin",
+                    cardNetworks: "Networks",
+                    cardDev: "Dev",
+                    cardFlutter: "Flutter Apps",
+                    personalDetailsTitle: "Personal Details",
+                    labelName: "Name:",
+                    Myname: "Ahmed Khalil Ghawi",
+                    labelFrom: "From:",
+                    labelUniversity: "University:",
+                    labelDOB: "Date of Birth:",
+                    valUniversity: "University of Science and Renaissance (Azaz)",
+                    valAleppo: "Aleppo, Syria",
+                    viewDetailsBtn: "View Details",
+                    btnGithub: "GitHub Profile"
+                },
+                ar: {
+                    navAbout: "من أنا", navSkills: "المهارات", navProjects: "أعمالي", navContact: "تواصل",
+                    heroBadge: "مهندس برمجيات واختصاصي IT",
+                    heroGreeting: "أهلاً، أنا أحمد غاوي",
+                    heroTitle1: "احتراف العتاد",
+                    heroTitle2: "وبناء البرمجيات.",
+                    heroDesc: "من تشخيص أعطال الهاردوير المعقدة إلى هندسة تطبيقات فلاتر قوية. أقدم حلولاً تقنية شاملة لضمان عمل أنظمتك الرقمية والمادية بكفاءة تامة.",
+                    btnContact: "وظفني",
+                    btnProjects: "تصفح المشاريع",
+                    secAboutTitle: "حلول تقنية شاملة",
+                    secAboutSmall: "خدمات ونبذة",
+                    aboutText1: "أنا مهندس معلوماتية لا أكتفي بكتابة الكود، بل أفهم الآلة التي يعمل عليها. من إصلاح اللوحة الأم للحاسوب إلى نشر تطبيق فلاتر قابل للتوسع، أنا جسر بين العالم المادي والرقمي.",
+                    secExpTitle: "رحلتي المهنية",
+                    secProjTitle: "أعمال مختارة",
+                    service1Title: "دعم فني، هاردوير وشبكات",
+                    service1List: `
+                        <li class="flex items-center gap-2"><i class="ph ph-check text-green-500"></i> إدارة السيرفرات والشبكات</li>
+                        <li class="flex items-center gap-2"><i class="ph ph-check text-green-500"></i> صيانة هاردوير اللابتوبات</li>
+                        <li class="flex items-center gap-2"><i class="ph ph-check text-green-500"></i> فرمتة الأنظمة والحماية</li>
+                    `,
+                    service2Title: "تطوير التطبيقات",
+                    service2List: `
+                        <li class="flex items-center gap-2"><i class="ph ph-check text-green-500"></i> تطبيقات فلاتر (Flutter)</li>
+                        <li class="flex items-center gap-2"><i class="ph ph-check text-green-500"></i> تصميم واجهات UI/UX</li>
+                        <li class="flex items-center gap-2"><i class="ph ph-check text-green-500"></i> بناء معماري نظيف</li>
+                    `,
+                    service3Title: "حلول برمجية و AI",
+                    service3List: `
+                        <li class="flex items-center gap-2"><i class="ph ph-check text-green-500"></i> تصميم مواقع (React)</li>
+                        <li class="flex items-center gap-2"><i class="ph ph-check text-green-500"></i> استخدام الذكاء الاصطناعي (Prompting)</li>
+                        <li class="flex items-center gap-2"><i class="ph ph-check text-green-500"></i> تنصيب البرمجيات</li>
+                    `,
+                    expNetworkTitle: "مدير شبكات وسيرفرات",
+                    expNetworkDesc: "إدارة البنية التحتية للشبكات، حماية السيرفرات، حل مشاكل الاتصال والتحكم في صلاحيات الوصول في الإدارة.",
+                    expFreelanceTitle: "اخصائي IT مستقل",
+                    expFreelanceDesc: "تشخيص أعطال الهاردوير، فرمتة وتنصيب أنظمة التشغيل، وحل مشاكل البرمجيات المعقدة.",
+                    expWebAppTitle: "مصمم ويب وتطبيقات",
+                    expWebAppDesc: "تطوير تطبيقات أندرويد وإدارة مشاريع الويب. التركيز على تجربة المستخدم والكود النظيف.",
+                    expDataTitle: "إدخال بيانات ومراقبة",
+                    expDataDesc: "معالجة دقيقة للبيانات ومراقبة الأنظمة مع منظمات مثل سبل و My Humanity.",
+                    cardAdmin: "إدارة",
+                    cardNetworks: "شبكات",
+                    cardDev: "تطوير",
+                    cardFlutter: "تطبيقات فلاتر",
+                    personalDetailsTitle: "تفاصيل شخصية",
+                    labelName: "الاسم:",
+                    Myname: "أحمد خليل غاوي",
+                    labelFrom: "الإقامة:",
+                    labelUniversity: "الجامعة:",
+                    labelDOB: "تاريخ الميلاد:",
+                    valUniversity: "جامعة العلوم والنهضة (اعزاز)",
+                    valAleppo: "حلب، سوريا",
+                    viewDetailsBtn: "التفاصيل",
+                    btnGithub: "حساب GitHub"
+                }
+            };
+
+            const projectData = {
+                tpp: {
+                    title: "TPP Shooter Game",
+                    img: "assets/project1.jpg",
+                    fallback: "https://placehold.co/800x600/222/8b5cf6?text=TPP+Game",
+                    tags: ["UE5", "C++", "3D Logic"],
+                    desc: "A high-fidelity Third Person Shooter game built with Unreal Engine 5. While my focus has shifted to IT solutions, this project demonstrates my ability to handle complex logic and performance optimization.",
+                    link: "https://github.com/GH-ZX"
+                },
+                technoverse: {
+                    title: "TechnoVerse App",
+                    img: "assets/project2.jpg",
+                    fallback: "https://placehold.co/800x600/1e3a8a/fff?text=TechnoVerse",
+                    tags: ["Flutter", "Dart", "Firebase", "E-commerce"],
+                    desc: "A fully functional e-commerce mobile application for buying and selling tech gear. It features a clean UI, secure authentication, real-time database updates via Firebase, and a dedicated admin panel for inventory management.",
+                    link: "https://github.com/GH-ZX/"
+                },
+                web: {
+                    title: "Carrefour Web Store",
+                    img: "assets/project3.jpg",
+                    fallback: "https://placehold.co/800x600/475569/fff?text=Web+Design",
+                    tags: ["React", "TailwindCSS", "Responsive"],
+                    desc: "A modern, responsive web store clone for Carrefour. Designed with a focus on UX/UI principles, speed, and mobile responsiveness using React and TailwindCSS.",
+                    link: "https://github.com/GH-ZX"
+                },
+                taskverse: {
+                    title: "TaskVerse System",
+                    img: "assets/project4.jpg",
+                    fallback: "https://placehold.co/800x600/134e4a/fff?text=TaskVerse",
+                    tags: ["Flutter", "Productivity", "System Design"],
+                    desc: "A specialized task management tool designed for the Media & Communication Department. It helps streamline daily workflows, assign tasks to team members, and track progress with visual analytics.",
+                    link: "https://github.com/GH-ZX"
+                }
+            };
+
+            // --- Logic ---
+            let currentLang = 'ar';
+            let isDark = localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
+            const html = document.documentElement;
+
+            function applyTheme() {
+                isDark ? html.classList.add('dark') : html.classList.remove('dark');
+            }
+            
+            function updateContent() {
+                const elements = document.querySelectorAll('[data-i18n]');
+                elements.forEach(el => {
+                    const key = el.getAttribute('data-i18n');
+                    if (translations[currentLang][key]) {
+                        if(key.includes('List')) {
+                            el.innerHTML = translations[currentLang][key];
+                        } else {
+                            el.innerText = translations[currentLang][key];
+                        }
+                    }
+                });
+                
+                if (currentLang === 'ar') {
+                    html.setAttribute('dir', 'rtl');
+                    html.classList.remove('font-sans');
+                    html.classList.add('font-arabic');
+                } else {
+                    html.setAttribute('dir', 'ltr');
+                    html.classList.remove('font-arabic');
+                    html.classList.add('font-sans');
+                }
+            }
+
+            // Toggles
+            document.getElementById('theme-toggle').addEventListener('click', () => {
+                isDark = !isDark;
+                localStorage.theme = isDark ? 'dark' : 'light';
+                applyTheme();
+            });
+
+            document.getElementById('lang-toggle').addEventListener('click', () => {
+                currentLang = currentLang === 'en' ? 'ar' : 'en';
+                updateContent();
+            });
+
+            // Cursor
+            const cursorRing = document.getElementById('cursor-ring');
+            const cursorDot = document.getElementById('cursor-dot');
+            let mouseX = -100, mouseY = -100;
+            let ringX = -100, ringY = -100;
+
+            window.addEventListener('mousemove', (e) => {
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+                cursorDot.style.left = `${mouseX}px`;
+                cursorDot.style.top = `${mouseY}px`;
+            });
+            
+            function animateCursor() {
+                ringX += (mouseX - ringX) * 0.15;
+                ringY += (mouseY - ringY) * 0.15;
+                cursorRing.style.left = `${ringX}px`;
+                cursorRing.style.top = `${ringY}px`;
+                requestAnimationFrame(animateCursor);
+            }
+            animateCursor();
+
+            // Modal
+            const modal = document.getElementById('project-modal');
+            window.openModal = (id) => {
+                const data = projectData[id];
+                if(!data) return;
+                document.getElementById('modal-title').innerText = data.title;
+                document.getElementById('modal-desc').innerText = data.desc;
+                document.getElementById('modal-link').href = data.link;
+                document.getElementById('modal-img').src = data.img;
+                document.getElementById('modal-img').onerror = function(){this.src=data.fallback};
+                
+                const tags = document.getElementById('modal-tags');
+                tags.innerHTML = '';
+                data.tags.forEach(t => {
+                    tags.innerHTML += `<span class="px-2 py-1 bg-gray-200 dark:bg-gray-700 text-xs rounded-md">${t}</span>`;
+                });
+                modal.classList.remove('hidden');
+            };
+            window.closeModal = () => modal.classList.add('hidden');
+            modal.addEventListener('click', e => { if(e.target === modal) closeModal(); });
+
+            // Init
+            applyTheme();
+            updateContent();
+
+            // --- Three.js Data Cluster Scene ---
+            const initThree = () => {
+                const container = document.getElementById('canvas-container');
+                const scene = new THREE.Scene();
+                const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+                const renderer = new THREE.WebGLRenderer({alpha: true, antialias: true});
+                renderer.setSize(window.innerWidth, window.innerHeight);
+                container.appendChild(renderer.domElement);
+
+                // Group to hold the cluster
+                const clusterGroup = new THREE.Group();
+                scene.add(clusterGroup);
+
+                // Create Data Cubes (Nodes)
+                const geometry = new THREE.BoxGeometry(0.5, 0.5, 0.5);
+                const material = new THREE.MeshBasicMaterial({ color: 0x6366f1, wireframe: true, transparent: true, opacity: 0.3 });
+                const solidMat = new THREE.MeshBasicMaterial({ color: 0x0ea5e9, transparent: true, opacity: 0.4 });
+
+                for (let i = 0; i < 40; i++) {
+                    const mesh = new THREE.Mesh(geometry, Math.random() > 0.5 ? material : solidMat);
+                    // Random positions forming a cloud
+                    mesh.position.x = (Math.random() - 0.5) * 15;
+                    mesh.position.y = (Math.random() - 0.5) * 15;
+                    mesh.position.z = (Math.random() - 0.5) * 15;
+                    
+                    // Random rotation
+                    mesh.rotation.x = Math.random() * Math.PI;
+                    mesh.rotation.y = Math.random() * Math.PI;
+                    
+                    clusterGroup.add(mesh);
+                }
+
+                // Add connections (Lines between nearby nodes - Simulated visually with a larger wireframe object)
+                const connectionGeo = new THREE.IcosahedronGeometry(8, 1);
+                const connectionMat = new THREE.MeshBasicMaterial({ color: 0x6366f1, wireframe: true, transparent: true, opacity: 0.05 });
+                const connections = new THREE.Mesh(connectionGeo, connectionMat);
+                scene.add(connections);
+
+                // Stars
+                const starsGeo = new THREE.BufferGeometry();
+                const starsCount = 1500;
+                const posArray = new Float32Array(starsCount * 3);
+                for(let i=0; i<starsCount*3; i++) {
+                    posArray[i] = (Math.random() - 0.5) * 80;
+                }
+                starsGeo.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+                const starsMat = new THREE.PointsMaterial({
+                    size: 0.05, color: 0xffffff, transparent: true, opacity: 0.5
+                });
+                const stars = new THREE.Points(starsGeo, starsMat);
+                scene.add(stars);
+
+                camera.position.z = 20;
+
+                let mouseX = 0, mouseY = 0;
+                document.addEventListener('mousemove', e => {
+                    mouseX = (e.clientX - window.innerWidth/2) * 0.0005;
+                    mouseY = (e.clientY - window.innerHeight/2) * 0.0005;
+                });
+
+                const animate = () => {
+                    requestAnimationFrame(animate);
+                    
+                    // Rotate the whole cluster
+                    clusterGroup.rotation.y += 0.002;
+                    clusterGroup.rotation.x += 0.001;
+                    
+                    // Rotate connections opposite way
+                    connections.rotation.y -= 0.001;
+                    
+                    // Stars bg
+                    stars.rotation.y += 0.0002;
+
+                    // Mouse interaction (Tilt)
+                    clusterGroup.rotation.x += (mouseY - clusterGroup.rotation.x) * 0.05;
+                    clusterGroup.rotation.y += (mouseX - clusterGroup.rotation.y) * 0.05;
+
+                    renderer.render(scene, camera);
+                };
+                animate();
+                
+                window.addEventListener('resize', () => {
+                    camera.aspect = window.innerWidth/window.innerHeight;
+                    camera.updateProjectionMatrix();
+                    renderer.setSize(window.innerWidth, window.innerHeight);
+                });
+            };
+            
+            if (window.WebGLRenderingContext) initThree();
+        </script>
+    </body>
+    </html>
